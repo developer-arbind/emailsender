@@ -4,16 +4,19 @@ let FormData = require("form-data");
 let cors = require("cors");
 let Mailgun = require("mailgun.js");
 const mailgun = new Mailgun(FormData);
-const DOMAIN = "studyspaceowner.me";
+let dotenv = require("dotenv");
+dotenv.config();
+const DOMAIN = "wachwith.me";
 const mg = mailgun.client({
   username: "api",
-  key: "1f131cddc03280f13232b2af9b68a18e-063062da-de47c94f",
+  key: process.env.KEY,
 });
 
 const sendMail = async (email) => {
+  console.log("hello!");
   let random = Math.floor(Math.random() * 123);
   const messageData = {
-    from: `StudySpace <noreply@${DOMAIN}>`,
+    from: `Wachwithme <noreply@${DOMAIN}>`,
     to: email,
     subject: "Known Verification😃😄😃",
     text: "she's just opened! " + random,
@@ -39,8 +42,10 @@ let server = http.createServer(app);
 app.get("/send/:email", async (req, res) => {
   const email = req.params.email;
   let data = await sendMail(email);
+  console.log("error: ", data.error);
   return res.status(200).json({
     success: true,
+    text: data.error,
     msg: "email delivered!",
   });
 });
